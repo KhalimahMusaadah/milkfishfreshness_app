@@ -24,37 +24,57 @@ class _DeteksiPageState extends State<DeteksiPage> {
   }
 
   Future<void> _cropImage(File imageFile) async {
-    final croppedFile = await ImageCropper().cropImage(
-      sourcePath: imageFile.path,
-      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-      compressQuality: 100,
-      maxWidth: 500,
-      maxHeight: 500,
-    );
+    try {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: imageFile.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        compressQuality: 100,
+        maxWidth: 500,
+        maxHeight: 500,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Edit Gambar',
+            toolbarColor: Colors.blueAccent,
+            toolbarWidgetColor: Colors.white,
+            activeControlsWidgetColor: Colors.blue,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: true,
+          ),
+        ],
+      );
 
-    if (croppedFile != null) {
-      setState(() {
-        _image = File(croppedFile.path);
-        _isProcessing = true;
-      });
-      
-      final result = await _classifyImage(_image!);
-      
+      if (croppedFile != null) {
+        setState(() {
+          _image = File(croppedFile.path);
+          _isProcessing = true;
+        });
+        
+        final result = await _classifyImage(_image!);
+        
+        if (!mounted) return;
+        
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HasilDeteksiPage(
+              imageFile: _image!,
+              result: result,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
       if (!mounted) return;
       
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HasilDeteksiPage(
-            imageFile: _image!,
-            result: result,
-          ),
-        ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saat memproses gambar: ${e.toString()}')),
       );
-      
-      setState(() {
-        _isProcessing = false;
-      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
   }
 
