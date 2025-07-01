@@ -22,19 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // error handling logo
-            _buildLogo(),
-            const SizedBox(height: 20),
-            // loading indicator
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-              strokeWidth: 3,
-            ),
-          ],
-        ),
+        child: _buildLogo(),
       ),
     );
   }
@@ -42,13 +30,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget _buildLogo() {
     return Image.asset(
       'assets/images/logo.png',
-      width: 150,
-      height: 150,
+      width: 250, // diperbesar
+      height: 250,
       errorBuilder: (context, error, stackTrace) {
         debugPrint("Error loading logo: $error");
         return Container(
-          width: 150,
-          height: 150,
+          width: 250,
+          height: 250,
           color: Colors.grey[200],
           child: const Icon(Icons.image_not_supported, color: Colors.grey),
         );
