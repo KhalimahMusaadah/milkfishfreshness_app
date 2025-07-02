@@ -30,8 +30,8 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget _buildLogo() {
     return Image.asset(
       'assets/images/logo.png',
-      width: 250, // diperbesar
-      height: 250,
+      width: 300, // diperbesar
+      height: 300,
       errorBuilder: (context, error, stackTrace) {
         debugPrint("Error loading logo: $error");
         return Container(
