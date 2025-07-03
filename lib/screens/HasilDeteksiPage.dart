@@ -14,12 +14,14 @@ class HasilDeteksiPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color resultColor;
-    if (result.contains('Tidak Segar')) {
-      resultColor = Colors.red;
+    if (result.contains('Sangat Segar')) {
+      resultColor = const Color(0xFF023E8A); // Biru tua
     } else if (result.contains('Segar')) {
-      resultColor = Colors.orange;
+      resultColor = const Color(0xFFFF8A5B); // Oranye
+    } else if (result.contains('Kurang Segar') || result.contains('Tidak Segar')) {
+      resultColor = const Color(0xFFF8E9A1); // Kuning muda
     } else {
-      resultColor = Colors.green;
+      resultColor = Colors.grey; // fallback default
     }
 
     return Scaffold(

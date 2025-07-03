@@ -43,102 +43,176 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF0F0F0),
-      body: SafeArea(
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Column(
-              children: [
-                // HEADER BIRU
-                Container(
-                  width: double.infinity,
-                  height: 300,
-                  decoration: const BoxDecoration(
-                    color: Colors.blueAccent,
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.blueAccent,
+            Color(0xFFB3E5FC),
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 100),
+          child: Column(
+            children: [
+              // Header
+              Container(
+                width: double.infinity,
+                height: 180,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    Text(
+                      'ScanBang',
+                      style: TextStyle(
+                        fontFamily: 'Nectarine',
+                        color: Colors.white,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 1),
+                    Text(
+                      'Solusi Mobile Deteksi Kesegaran Bandeng\nBerbasis Citra Mata',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Card: What is ScanBang 
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: const [
                       Text(
-                        'ScanBang',
+                        'What is ScanBang?',
                         style: TextStyle(
-                          fontFamily: 'Nectarine',
-                          color: Colors.white,
-                          fontSize: 40,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        'Solusi Mobile Deteksi Kesegaran Bandeng\nBerbasis Citra Mata',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
+                          fontFamily: 'Montserrat',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
                         ),
                         textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'ScanBang adalah aplikasi mobile yang digunakan untuk mendeteksi tingkat kesegaran ikan bandeng secara otomatis berdasarkan citra mata menggunakan teknologi kecerdasan buatan',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.justify,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 160),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
 
-            // CARD MELAYANG DENGAN ATAS MELENGKUNG KE DALAM
-            Positioned(
-              top: 150,
-              left: 0,
-              right: 0,
-              child: ClipPath(
-                clipper: RoundedTopClipper(),
-                child: Material(
-                  elevation: 7,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
+              //Card ciri-ciri Kesegaran Ikan
+              FreshnessCard(),
+              const SizedBox(height: 16),
+
+              // Card: Fitur Unggulan (tanpa shadow)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Fitur Unggulan',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'What is ScanBang?',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        Image.asset(
-                          'assets/images/logo.png',
-                          width: 100,
-                          height: 100,
-                          errorBuilder: (context, error, stackTrace) => const Icon(
-                            Icons.image_not_supported,
-                            size: 60,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'ScanBang is a mobile-based application that uses eye image recognition to determine the freshness of milkfish. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                          style: TextStyle(fontSize: 15),
-                          textAlign: TextAlign.justify,
-                        ),
-                      ],
-                    ),
+                      const SizedBox(height: 12),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          double cardWidth = (constraints.maxWidth - 12) / 2;
+                          return Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children: [
+                              _featureCard(cardWidth, Icons.camera_alt, 'Deteksi Otomatis', 'Dari kamera dan galeri'),
+                              _featureCard(cardWidth, Icons.flash_on, 'Cepat', 'Gunakan model deep learning'),
+                              _featureCard(cardWidth, Icons.touch_app, 'Mudah Digunakan', 'Cocok semua kalangan'),
+                              _featureCard(cardWidth, Icons.pets, 'Spesifik Bandeng', 'Hasil lebih relevan'),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget _featureCard(double width, IconData icon, String title, String subtitle) {
+    return SizedBox(
+      width: width,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F7FA),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 30, color: Colors.blueAccent),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 11,
+                color: Colors.black54,
               ),
             ),
           ],
@@ -148,30 +222,139 @@ class _HomeContent extends StatelessWidget {
   }
 }
 
-// Custom clipper untuk melengkungkan bagian atas card ke dalam
-class RoundedTopClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
+class FreshnessCard extends StatelessWidget {
+  const FreshnessCard({super.key});
 
-    // Mulai dari titik kiri atas (sedikit ke bawah)
-    path.moveTo(0, 40);
+  Widget _buildSection(String title, List<Map<String, String>> items, double cardWidth) {
+    // Tentukan warna latar berdasarkan judul kategori
+    Color bgColor;
+    if (title == 'Sangat Segar') {
+      bgColor = const Color(0xFF023E8A);
+    } else if (title == 'Segar') {
+      bgColor = const Color(0xFF0077B6);
+    } else if (title == 'Kurang Segar') {
+      bgColor = const Color(0xFFFF8A5B);
+    } else {
+      bgColor = const Color(0xFFE3F2FD);
+    }
 
-    // Buat lengkungan ke bawah di bagian atas
-    path.quadraticBezierTo(
-      size.width / 2, -40, // titik kontrol di atas layar (untuk lengkungan dalam)
-      size.width, 40,       // titik akhir lengkungan
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 125,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return Container(
+                  width: cardWidth,
+                  margin: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['title'] ?? '',
+                        style: const TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item['description'] ?? '',
+                        style: const TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 11,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
-
-    // Buat sisi bawah card
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-
-    path.close();
-
-    return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double cardWidth = (constraints.maxWidth - 12) / 2;
+
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Ciri-ciri Kesegaran Ikan',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _buildSection('Sangat Segar', [
+                  {'title': 'Bentuk', 'description': 'Bulat sempurna dan cembung.'},
+                  {'title': 'Kejernihan', 'description': 'Sangat jernih, bening, tidak keruh.'},
+                  {'title': 'Kornea', 'description': 'Transparan dan mengilap.'},
+                  {'title': 'Warna Pupil', 'description': 'Hitam pekat, kontras jelas.'},
+                ], cardWidth),
+                _buildSection('Segar', [
+                  {'title': 'Bentuk', 'description': 'Agak menonjol tapi tidak terlalu cembung.'},
+                  {'title': 'Kejernihan', 'description': 'Sedikit buram, masih terlihat bagian pupil dan putih mata.'},
+                  {'title': 'Kornea', 'description': 'Mulai menunjukkan tanda-tanda keabuan.'},
+                  {'title': 'Warna Pupil', 'description': 'Mulai memudar, tidak terlalu hitam pekat.'},
+                ], cardWidth),
+                _buildSection('Kurang Segar', [
+                  {'title': 'Bentuk', 'description': 'Cekung (masuk ke dalam), terlihat kempis.'},
+                  {'title': 'Kejernihan', 'description': 'Keruh total, tidak bisa melihat bagian dalam mata dengan jelas.'},
+                  {'title': 'Kornea', 'description': 'Berwarna putih susu atau abu-abu kusam.'},
+                  {'title': 'Warna Pupil', 'description': 'Tidak jelas, menyatu dengan bagian lain mata.'},
+                ], cardWidth),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
