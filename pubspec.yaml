@@ -74,6 +74,10 @@ flutter:
         - asset: assets/fonts/Nectarine.ttf
   assets:
     - assets/images/logo.png
+    - assets/images/appbar.png
+    - assets/images/fitur.png
+    - assets/images/edit.png
+    - assets/images/centang.png
     - assets/models/model_quant.tflite
     - assets/models/metadata.json
 

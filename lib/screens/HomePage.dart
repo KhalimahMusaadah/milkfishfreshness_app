@@ -43,22 +43,20 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF2272BB),
-            Color.fromARGB(255, 179, 213, 252),
-          ],
-        ),
-      ),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 100),
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF2272BB),
+                Color.fromARGB(255, 179, 213, 252),
+              ],
+            ),
+          ),
           child: Column(
             children: [
               // Header
@@ -122,6 +120,7 @@ class _HomeContent extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 12,
+                          fontWeight: FontWeight.normal,
                         ),
                         textAlign: TextAlign.justify,
                       ),
@@ -131,11 +130,11 @@ class _HomeContent extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              //Card ciri-ciri Kesegaran Ikan
-              FreshnessCard(),
+              // Card: Ciri-ciri Kesegaran Ikan
+              const FreshnessCard(),
               const SizedBox(height: 16),
 
-              // Card: Fitur Unggulan (tanpa shadow)
+              // Card: Fitur Unggulan
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Container(
@@ -167,7 +166,7 @@ class _HomeContent extends StatelessWidget {
                               _featureCard(cardWidth, Icons.camera_alt, 'Deteksi Otomatis', 'Dari kamera dan galeri'),
                               _featureCard(cardWidth, Icons.flash_on, 'Cepat', 'Gunakan model deep learning'),
                               _featureCard(cardWidth, Icons.touch_app, 'Mudah Digunakan', 'Cocok semua kalangan'),
-                              _featureCard(cardWidth, Icons.pets, 'Spesifik Bandeng', 'Hasil lebih relevan'),
+                              _featureCard(cardWidth, Icons.set_meal, 'Spesifik Bandeng', 'Hasil lebih relevan'),
                             ],
                           );
                         },
@@ -176,7 +175,7 @@ class _HomeContent extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20), // bisa kamu atur biar tidak terlalu jauh dari bottom bar
             ],
           ),
         ),
@@ -221,7 +220,6 @@ class _HomeContent extends StatelessWidget {
     );
   }
 }
-
 class FreshnessCard extends StatelessWidget {
   const FreshnessCard({super.key});
 
