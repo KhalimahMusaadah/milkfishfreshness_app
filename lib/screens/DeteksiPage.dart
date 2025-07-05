@@ -53,7 +53,7 @@ class _DeteksiPageState extends State<DeteksiPage> {
 
         if (!mounted) return;
 
-        Navigator.push(
+        final shouldReset = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => HasilDeteksiPage(
@@ -62,6 +62,12 @@ class _DeteksiPageState extends State<DeteksiPage> {
             ),
           ),
         );
+
+        if (shouldReset == true) {
+          setState(() {
+            _image = null;
+          });
+        }
       }
     } catch (e) {
       if (!mounted) return;
