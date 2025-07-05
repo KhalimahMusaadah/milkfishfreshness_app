@@ -16,9 +16,9 @@ class HasilDeteksiPage extends StatelessWidget {
     Color resultColor;
     if (result.contains('Sangat Segar')) {
       resultColor = const Color(0xFF023E8A); // Biru tua
-    } else if (result.contains('Segar')) {
+    } else if (result.contains('Tidak Segar')) {
       resultColor = const Color(0xFFFF8A5B); // Oranye
-    } else if (result.contains('Kurang Segar') || result.contains('Tidak Segar')) {
+    } else if (result.contains('Segar')) {
       resultColor = const Color(0xFFF8E9A1); // Kuning muda
     } else {
       resultColor = Colors.grey; // fallback default

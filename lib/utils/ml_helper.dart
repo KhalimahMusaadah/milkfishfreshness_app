@@ -1,95 +1,100 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
-import 'package:image/image.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 class MLHelper {
   static late Interpreter _interpreter;
-  static bool _isInitialized = false;
+  static late Map<String, dynamic> _metadata;
 
+  /// Inisialisasi model dan metadata
   static Future<void> initialize() async {
-    if (_isInitialized) return;
+    try {
+      final modelData = await rootBundle.load('assets/models/model_quant.tflite');
+      final modelBytes = modelData.buffer.asUint8List();
+      _interpreter = Interpreter.fromBuffer(modelBytes);
 
-    final options = InterpreterOptions();
-    _interpreter = await Interpreter.fromAsset('assets/models/model.tflite', options: options);
-    
-    print('Input details: ${_interpreter.getInputTensor(0)}');
-    print('Output details: ${_interpreter.getOutputTensor(0)}');
-    
-    _isInitialized = true;
+      final metadataStr = await rootBundle.loadString('assets/models/metadata.json');
+      _metadata = jsonDecode(metadataStr);
+
+      print('✅ Model dan metadata berhasil dimuat.');
+    } catch (e) {
+      throw Exception('❌ Gagal inisialisasi MLHelper: ${e.toString()}');
+    }
   }
 
+  /// Fungsi utama klasifikasi tanpa normalisasi
   static Future<String> classifyImage(File imageFile) async {
-    if (!_isInitialized) await initialize();
+    try {
+      // 1. Decode gambar
+      final rawBytes = await imageFile.readAsBytes();
+      final originalImage = img.decodeImage(rawBytes);
+      if (originalImage == null) throw Exception('Gagal decode gambar');
 
-    // 1. Load and decode image
-    final imageBytes = await imageFile.readAsBytes();
-    final image = img.decodeImage(imageBytes);
-    if (image == null) throw Exception("Failed to load image");
+      // 2. Log ukuran dan RGB awal
+      final oriPixel = originalImage.getPixelSafe(0, 0);
+      print('🖼️ Original Size: ${originalImage.width} x ${originalImage.height}');
+      print('🔎 Original RGB (0,0): R=${oriPixel.r}, G=${oriPixel.g}, B=${oriPixel.b}');
 
-    // 2. Preprocess image
-    final input = _preprocessImage(image);
+      // 3. Resize
+      final inputSize = _metadata['preprocess']['input_size'];
+      final width = inputSize[0];
+      final height = inputSize[1];
+      final resized = img.copyResize(originalImage, width: width, height: height);
 
-    // 3. Prepare output
-    final outputShape = _interpreter.getOutputTensor(0).shape;
-    final output = _createOutputArray(outputShape);
+      final resizedPixel = resized.getPixelSafe(0, 0);
+      print('📐 Resized Size: ${resized.width} x ${resized.height}');
+      print('🧪 Resized RGB (0,0): R=${resizedPixel.r}, G=${resizedPixel.g}, B=${resizedPixel.b}');
 
-    // 4. Run inference
-    _interpreter.run(input, output);
+      // 4. Buat input tensor tanpa normalisasi (langsung pakai nilai RGB 0-255)
+      final input = Float32List(width * height * 3);
+      int index = 0;
 
-    // 5. Process results
-    return _interpretResults(output[0]);
-  }
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          final p = resized.getPixelSafe(x, y);
 
-  static List<List<List<List<double>>>> _preprocessImage(img.Image image) {
-    const inputSize = 224;
-    
-    // Resize image to 224x224
-    image = img.copyResize(image, width: inputSize, height: inputSize);
-    
-    // Create empty array with shape [1,224,224,3]
-    final inputArray = List.generate(1, (_) => 
-        List.generate(inputSize, (_) => 
-            List.generate(inputSize, (_) => 
-                List.filled(3, 0.0))));
+          input[index++] = p.r.toDouble();
+          input[index++] = p.g.toDouble();
+          input[index++] = p.b.toDouble();
 
-    // Get RGB pixels and normalize to [-1, 1]
-    final pixels = image.getBytes(order: ChannelOrder.rgb);
-    int pixelIndex = 0;
-    
-    for (int y = 0; y < inputSize; y++) {
-      for (int x = 0; x < inputSize; x++) {
-        inputArray[0][y][x][0] = (pixels[pixelIndex++] / 127.5) - 1.0; // R
-        inputArray[0][y][x][1] = (pixels[pixelIndex++] / 127.5) - 1.0; // G
-        inputArray[0][y][x][2] = (pixels[pixelIndex++] / 127.5) - 1.0; // B
+          if (x == 0 && y == 0) {
+            print('⚙️ Input tanpa normalisasi (0,0): R=${p.r.toDouble()}, G=${p.g.toDouble()}, B=${p.b.toDouble()}');
+          }
+        }
       }
-    }
 
-    return inputArray;
-  }
+      // 5. Inferensi
+      final inputTensor = input.reshape([1, height, width, 3]);
+      final output = List.filled(1 * 3, 0.0).reshape([1, 3]);
 
-  static List<List<double>> _createOutputArray(List<int> shape) {
-    final elements = shape.reduce((a, b) => a * b);
-    return [List.filled(elements, 0.0)];
-  }
+      _interpreter.run(inputTensor, output);
 
-  static String _interpretResults(List<double> output) {
-    final labels = ['Sangat Segar', 'Segar', 'Tidak Segar'];
-    final prediction = _getPrediction(output);
-    return '${labels[prediction.index]} (${(prediction.confidence * 100).toStringAsFixed(1)}%)';
-  }
+      // 6. Interpretasi hasil
+      final labels = List<String>.from(_metadata['labels']);
+      final probs = output[0];
 
-  static ({int index, double confidence}) _getPrediction(List<double> probabilities) {
-    int maxIndex = 0;
-    double maxProb = probabilities[0];
-    
-    for (int i = 1; i < probabilities.length; i++) {
-      if (probabilities[i] > maxProb) {
-        maxIndex = i;
-        maxProb = probabilities[i];
+      print('\n📊 Probabilitas Kelas:');
+      for (int i = 0; i < probs.length; i++) {
+        print('${labels[i]}: ${(probs[i] * 100).toStringAsFixed(2)}%');
       }
+
+      int maxIndex = 0;
+      double maxProb = probs[0];
+      for (int i = 1; i < probs.length; i++) {
+        if (probs[i] > maxProb) {
+          maxIndex = i;
+          maxProb = probs[i];
+        }
+      }
+
+      final result = '${labels[maxIndex]} (${(maxProb * 100).toStringAsFixed(1)}%)';
+      print('\n🎯 Hasil Akhir: $result');
+      return result;
+    } catch (e) {
+      throw Exception('❌ Classification error: ${e.toString()}');
     }
-    
-    return (index: maxIndex, confidence: maxProb);
   }
 }

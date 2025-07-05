@@ -1,0 +1,19 @@
+{
+  "labels": [
+    "Segar",
+    "Sangat Segar",
+    "Tidak Segar"
+  ],
+  "preprocess": {
+    "normalization": {
+      "mean": 127.5,
+      "std": 127.5,
+      "formula": "(pixel / 127.5) - 1.0"
+    },
+    "input_size": [
+      224,
+      224,
+      3
+    ]
+  }
+}
