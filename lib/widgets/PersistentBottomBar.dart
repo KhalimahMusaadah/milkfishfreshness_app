@@ -21,7 +21,7 @@ class PersistentBottomBar extends StatelessWidget {
         currentIndex: currentIndex,
         onTap: onTap,
         backgroundColor: Colors.white,
-        selectedItemColor: Colors.blueAccent,
+        selectedItemColor: Color(0xFF2272BB),
         unselectedItemColor: Colors.grey,
         showSelectedLabels: true,
         showUnselectedLabels: true,

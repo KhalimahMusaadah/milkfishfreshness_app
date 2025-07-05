@@ -20,15 +20,15 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: const TextStyle(
-          fontFamily: 'Montserrat', // Pastikan sudah ditambahkan di pubspec.yaml
-          fontSize: 20,
+          fontFamily: 'Montserrat',
+          fontSize: 17,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
       ),
-      centerTitle: false, // Letak judul di kiri
-      backgroundColor: Colors.blueAccent,
-      elevation: 0,
+      centerTitle: true,
+      backgroundColor: Color(0xFF2272BB), // warna biru tua sesuai permintaan
+      elevation: 0, // kita handle garis manual, jadi ini tetap nol
       leading: showBackButton
           ? IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -36,6 +36,14 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       actions: actions,
+      bottom: const PreferredSize(
+        preferredSize: Size.fromHeight(1),
+        child: Divider(
+          height: 1,
+          thickness: 1,
+          color: Colors.white24, // Bisa ganti ke putih jika ingin lebih halus
+        ),
+      ),
     );
   }
 

@@ -51,8 +51,8 @@ class _HomeContent extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.blueAccent,
-            Color(0xFFB3E5FC),
+            Color(0xFF2272BB),
+            Color.fromARGB(255, 179, 213, 252),
           ],
         ),
       ),
@@ -112,7 +112,7 @@ class _HomeContent extends StatelessWidget {
                           fontFamily: 'Montserrat',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
+                          color: Color(0xFF2272BB),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -196,7 +196,7 @@ class _HomeContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 30, color: Colors.blueAccent),
+            Icon(icon, size: 30, color: Color(0xFF1e66a8)),
             const SizedBox(height: 8),
             Text(
               title,
@@ -229,11 +229,11 @@ class FreshnessCard extends StatelessWidget {
     // Tentukan warna latar berdasarkan judul kategori
     Color bgColor;
     if (title == 'Sangat Segar') {
-      bgColor = const Color(0xFF023E8A);
+      bgColor = const Color(0xFF11395d);
     } else if (title == 'Segar') {
-      bgColor = const Color(0xFF0077B6);
+      bgColor = const Color(0xFF174f82);
     } else if (title == 'Kurang Segar') {
-      bgColor = const Color(0xFFFF8A5B);
+      bgColor = const Color(0xFF1e66a8);
     } else {
       bgColor = const Color(0xFFE3F2FD);
     }

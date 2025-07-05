@@ -48,11 +48,11 @@ class _DeteksiPageState extends State<DeteksiPage> {
           _image = File(croppedFile.path);
           _isProcessing = true;
         });
-        
+
         final result = await _classifyImage(_image!);
-        
+
         if (!mounted) return;
-        
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -65,7 +65,7 @@ class _DeteksiPageState extends State<DeteksiPage> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saat memproses gambar: ${e.toString()}')),
       );
@@ -88,75 +88,136 @@ class _DeteksiPageState extends State<DeteksiPage> {
 
   @override
   Widget build(BuildContext context) {
+    const Color primaryColor = Color(0xFF1B5B95); // warna biru gelap
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Deteksi Kesegaran Ikan Bandeng'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_image != null && !_isProcessing)
-              Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Image.file(_image!, height: 200, fit: BoxFit.cover),
-              )
-            else if (_isProcessing)
-              const Column(
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 20),
-                  Text('Memproses gambar...'),
-                ],
-              )
-            else
-              Container(
-                height: 200,
-                margin: const EdgeInsets.only(bottom: 30),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Center(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: const Color(0xFFF5F5F5), // background abu muda
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Kotak biru gelap berisi judul & deskripsi
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.image, size: 50, color: Colors.grey),
-                      SizedBox(height: 10),
-                      Text('Belum ada gambar', style: TextStyle(color: Colors.grey)),
+                    children: const [
+                      Text(
+                        'Upload Gambar Mata Ikan',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Silakan unggah gambar mata ikan bandeng untuk dianalisis tingkat kesegarannya.',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12,
+                          color: Colors.white70,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ],
                   ),
                 ),
-              ),
-            
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.camera_alt),
-                  onPressed: () => _pickImage(ImageSource.camera),
-                  label: const Text('Ambil Foto'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.photo_library),
-                  onPressed: () => _pickImage(ImageSource.gallery),
-                  label: const Text('Pilih dari Galeri'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+
+                const SizedBox(height: 20),
+
+                // Kotak putih berisi preview dan tombol
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        // Preview gambar
+                        Container(
+                          width: double.infinity,
+                          height: 220,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE0E0E0),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: _isProcessing
+                              ? const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(color: Colors.blueAccent),
+                                      SizedBox(height: 10),
+                                      Text('Memproses gambar...', style: TextStyle(fontFamily: 'Montserrat')),
+                                    ],
+                                  ),
+                                )
+                              : _image != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.file(_image!, fit: BoxFit.cover),
+                                    )
+                                  : const Center(
+                                      child: Icon(Icons.image_outlined, size: 60, color: Colors.grey),
+                                    ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Tombol galeri & kamera berdampingan
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // Galeri
+                            ElevatedButton.icon(
+                              onPressed: () => _pickImage(ImageSource.gallery),
+                              icon: const Icon(Icons.photo_library, color: Colors.white),
+                              label: const Text("Galeri", style: TextStyle(color: Colors.white)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                elevation: 2,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                            ),
+
+                            // Kamera
+                            ElevatedButton.icon(
+                              onPressed: () => _pickImage(ImageSource.camera),
+                              icon: const Icon(Icons.camera_alt, color: Colors.white),
+                              label: const Text("Kamera", style: TextStyle(color: Colors.white)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                elevation: 2,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

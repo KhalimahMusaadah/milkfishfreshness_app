@@ -13,72 +13,104 @@ class HasilDeteksiPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = const Color(0xFF1E66A8); // warna utama biru
+
+    // Tentukan warna dan icon berdasarkan hasil deteksi
     Color resultColor;
+    IconData resultIcon;
+    String status;
+
     if (result.contains('Sangat Segar')) {
-      resultColor = const Color(0xFF023E8A); // Biru tua
+      resultColor = const Color(0xFF023E8A);
+      resultIcon = Icons.check_circle;
+      status = 'Sangat Segar';
     } else if (result.contains('Tidak Segar')) {
-      resultColor = const Color(0xFFFF8A5B); // Oranye
+      resultColor = const Color(0xFFFF8A5B);
+      resultIcon = Icons.warning_amber_rounded;
+      status = 'Tidak Segar';
     } else if (result.contains('Segar')) {
-      resultColor = const Color(0xFFF8E9A1); // Kuning muda
+      resultColor = const Color(0xFFF8E9A1);
+      resultIcon = Icons.info;
+      status = 'Segar';
     } else {
-      resultColor = Colors.grey; // fallback default
+      resultColor = Colors.grey;
+      resultIcon = Icons.help_outline;
+      status = 'Tidak Dikenali';
     }
+
+    // Ambil confidence jika ada
+    final confidence = result.contains('(') ? result.split('(')[1].replaceAll(')', '') : '-';
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hasil Deteksi'),
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
         centerTitle: true,
+        elevation: 0,
       ),
+      backgroundColor: const Color(0xFFF5F5F5),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10)),
-              child: Image.file(imageFile, height: 300, fit: BoxFit.cover),
+            // Gambar ikan
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(imageFile, height: 260, width: double.infinity, fit: BoxFit.cover),
             ),
-            const SizedBox(height: 30),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: resultColor.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: resultColor),
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'Hasil Deteksi Kesegaran:',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    result.split(' (')[0],
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: resultColor,
+
+            const SizedBox(height: 25),
+
+            // Kartu hasil deteksi
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Icon(resultIcon, size: 60, color: resultColor),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Hasil Deteksi Kesegaran',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Tingkat Keyakinan: ${result.split('(')[1]}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
+                    const SizedBox(height: 10),
+                    Text(
+                      status,
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: resultColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tingkat Keyakinan: $confidence',
+                      style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                  ],
+                ),
               ),
             ),
+
             const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+
+            // Tombol kembali
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text('Kembali ke Deteksi'),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                elevation: 3,
               ),
-              child: const Text('Kembali ke Deteksi'),
             ),
           ],
         ),
